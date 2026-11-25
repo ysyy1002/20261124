@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Server Structure</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Segoe UI", "Malgun Gothic", "Nanum Gothic", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px; padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        h1 { color: #4a5568; font-size: 2.5rem; margin-bottom: 10px; }
+        .subtitle { color: #718096; font-size: 1.1rem; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px; margin-bottom: 40px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px; padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        .card h2 {
+            color: #2d3748; font-size: 1.5rem; margin-bottom: 20px;
+            border-bottom: 2px solid #667eea; padding-bottom: 10px;
+        }
+        .tree {
+            background: #f7fafc; border: 1px solid #e2e8f0;
+            border-radius: 8px; padding: 20px;
+            font-family: "Courier New", monospace;
+            font-size: 0.9rem; line-height: 1.8;
+            color: #4a5568; overflow-x: auto;
+        }
+        .tree .folder { color: #3182ce; font-weight: bold; }
+        .tree .file { color: #718096; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #667eea; color: white; font-weight: 600; }
+        .method { font-weight: bold; padding: 5px 10px; border-radius: 4px; font-size: 0.85rem; }
+        .get { background: #48bb78; color: white; }
+        .post { background: #4299e1; color: white; }
+        .put { background: #ed8936; color: white; }
+        .delete { background: #f56565; color: white; }
+        .endpoint { font-family: "Courier New", monospace; color: #2d3748; }
+        .status-badge {
+            display: inline-block; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 600;
+        }
+        .status-running { background: #c6f6d5; color: #276749; }
+        .code-block {
+            background: #1a202c; color: #e2e8f0;
+            padding: 20px; border-radius: 8px;
+            font-family: "Courier New", monospace;
+            font-size: 0.85rem; overflow-x: auto; margin-top: 20px;
+        }
+        .code-block .command { color: #63b3ed; }
+        .code-block .comment { color: #a0aec0; }
+        .live-test {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px; padding: 30px; margin-top: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        .live-test h2 { color: #2d3748; font-size: 1.5rem; margin-bottom: 20px; }
+        .test-result {
+            background: #f7fafc; border: 2px solid #667eea;
+            border-radius: 8px; padding: 20px; margin-top: 15px;
+            display: none;
+        }
+        .test-result.show { display: block; }
+        button {
+            background: #667eea; color: white; border: none;
+            padding: 12px 24px; border-radius: 8px;
+            font-size: 1rem; cursor: pointer;
+        }
+        button:hover { background: #5a67d8; }
+        .footer {
+            text-align: center; margin-top: 40px;
+            color: rgba(255, 255, 255, 0.8); font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖥️ Backend Server</h1>
+            <p class="subtitle">Python Flask 기반 REST API 서버 구조</p>
+        </header>        <div class="card">
+            <h2>📡 서버 상태</h2>
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                <span class="status-badge status-running">● 실행 중</span>
+                <span style="color: #718096;">http://127.0.0.1:5000</span>
+            </div>
+            <p style="color: #718096; font-size: 0.9rem;">
+                Flask 개발 서버가 정상적으로 구동 중입니다.
+            </p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>📁 디렉토리 구조</h2>
+                <div class="tree">
+                    backend/<br>
+                    <span style="color:#718096;">├──</span> <span style="color:#3182ce;font-weight:bold;">app/</span> <span style="color:#a0aec0;"># 핵심 코드</span><br>
+                    <span style="color:#718096;">&nbsp;&nbsp;├──</span> __init__.py<br>
+                    <span style="color:#718096;">&nbsp;&nbsp;├──</span> config.py<br>
+                    <span style="color:#718096;">&nbsp;&nbsp;├──</span> <span style="color:#3182ce;font-weight:bold;">models/</span><br>
+                    <span style="color:#718096;">&nbsp;&nbsp;&nbsp;&nbsp;└──</span> user.py<br>
+                    <span style="color:#718096;">&nbsp;&nbsp;├──</span> <span style="color:#3182ce;font-weight:bold;">routes/</span><br>
+                    <span style="color:#718096;">&nbsp;&nbsp;&nbsp;&nbsp;└──</span> user.py<br>
+                    <span style="color:#718096;">&nbsp;&nbsp;├──</span> <span style="color:#3182ce;font-weight:bold;">services/</span><br>
+                    <span style="color:#718096;">&nbsp;&nbsp;&nbsp;&nbsp;└──</span> user_service.py<br>
+                    <span style="color:#718096;">&nbsp;&nbsp;└──</span> <span style="color:#3182ce;font-weight:bold;">utils/</span><br>
+                    <span style="color:#718096;">&nbsp;&nbsp;&nbsp;&nbsp;└──</span> database.py<br>
+                    <span style="color:#718096;">├──</span> <span style="color:#3182ce;font-weight:bold;">instance/</span><br>
+                    <span style="color:#718096;">├──</span> <span style="color:#3182ce;font-weight:bold;">tests/</span><br>
+                    <span style="color:#718096;">├──</span> run.py <span style="color:#d69e2e;font-weight:bold;"># 진입점</span><br>
+                    <span style="color:#718096;">├──</span> requirements.txt <span style="color:#d69e2e;font-weight:bold;"># 의존성</span><br>
+                    <span style="color:#718096;">├──</span> .env<br>
+                    <span style="color:#718096;">└──</span> README.md
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🔌 API 엔드포인트</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">메서드</th>
+                            <th style="width: 45%;">엔드포인트</th>
+                            <th>설명</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td class="endpoint">/api/health</td>
+                            <td>서버 상태 확인</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td class="endpoint">/api/users</td>
+                            <td>사용자 목록 조회</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method post">POST</span></td>
+                            <td class="endpoint">/api/users</td>
+                            <td>사용자 생성</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method get">GET</span></td>
+                            <td class="endpoint">/api/users/&lt;id&gt;</td>
+                            <td>특정 사용자 조회</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method put">PUT</span></td>
+                            <td class="endpoint">/api/users/&lt;id&gt;</td>
+                            <td>사용자 수정</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method delete">DELETE</span></td>
+                            <td class="endpoint">/api/users/&lt;id&gt;</td>
+                            <td>사용자 삭제</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>        <div class="card">
+            <h2>🚀 실행 방법</h2>
+            <div class="code-block">
+                <div class="command">$ cd backend</div>
+                <div class="command">$ python -m venv venv</div>
+                <div class="command">$ venv\Scripts\activate</div>
+                <div class="command">$ pip install -r requirements.txt</div>
+                <div class="command">$ python run.py</div>
+                <div style="margin-top: 10px; color: #a0aec0;">➜ http://127.0.0.1:5000</div>
+            </div>
+        </div>
+
+        <div class="live-test">
+            <h2>🧪 라이브 API 테스트</h2>
+            <button onclick="testHealth()">헬스체크 API 호출</button>
+            <div id="testResult" class="test-result">
+                <strong>응답:</strong> <span id="responseBody"></span><br>
+                <strong>상태:</strong> <span id="responseStatus"></span>
+            </div>
+        </div>
+
+        <div class="footer">
+            &copy; 2026 Backend Server Template | Python + Flask + SQLAlchemy
+        </div>
+    </div>
+
+    <script>
+        async function testHealth() {
+            const resultDiv = document.getElementById('testResult');
+            const bodySpan = document.getElementById('responseBody');
+            const statusSpan = document.getElementById('responseStatus');
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/health');
+                const data = await response.json();
+                bodySpan.textContent = JSON.stringify(data, null, 2);
+                statusSpan.textContent = response.status + ' OK';
+                statusSpan.style.color = '#48bb78';
+                resultDiv.classList.add('show');
+            } catch (error) {
+                bodySpan.textContent = '연결 실패: 서버가 실행 중인지 확인하세요.';
+                statusSpan.textContent = '연결 오류';
+                statusSpan.style.color = '#f56565';
+                resultDiv.classList.add('show');
+            }
+        }
+    </script>
+</body>
+</html>
